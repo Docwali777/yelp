@@ -1,8 +1,18 @@
 <% include partials/header %>
-<div class='container'>
-  <div class="row">
-    <h1><%= campground.name %></h1>
-    <img src="<%= campground.url %>" alt="">
-    <p><%= campground.description %></p>
+  <div class='container'>
+    <div class="row">
+      <h1><%= campgrounds.name %></h1>
+      <img src="<%= campgrounds.image %>" alt="">
+      <p>
+        <%= campgrounds.description %>
+      </p>
+      <%  campgrounds.comments.forEach(comments=>{  %>
+        <p>
+          <strong> <%= comments.author %>g</strong> -
+          <%= comments.text %>
+        </p>
+
+        <%    }) %>
+    </div>
+    <a href="/campgrounds"><button type="button" name="button">Go Back to Campgrounds</button></a>
   </div>
-</div>

@@ -4,6 +4,15 @@ const path = require('path');
 const mongoose = require('mongoose');
 let {Schema} = mongoose
 const bodyParser = require('body-parser');
+const seedDB = require('./seeds')
+
+seedDB() //Remove all campgrounds
+
+const Campground = require('./models/campgrounds')
+// add Campgrounds
+
+
+//MODELS
 
 mongoose.connect('mongodb://localhost/yelp_camp')
 
@@ -16,40 +25,11 @@ mongoose.connection.on('error', ()=>{
 const app = express()
 const PORT = process.env.PORT || 3000
 
-//Schema Set-up
-let campgroundSchema = new Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  url: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  }
-
-})
-
-var Campground = mongoose.model('Campground', campgroundSchema)
-
-// Campground.create({
-//   name: 'People Sparks Trail',
-//   url: 'https://farm4.staticflickr.com/3560/3359900715_835e7b54d7.jpg',
-//   description: 'Meets my Expectiontations of a great trail'
-// }, (err, campground)=>{
-//   if(err){console.log(err);}
-//   else {
-//     console.log(`created new campground`, campground);
-//   }
-// })
 
 app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({extended: true}))
-// app.use(express.static('views'))
-app.use(express.static('/styles'))
+
+app.use(express.static('public'))
 
 app.get('/', (req, res)=>{
   res.render('landing')
@@ -93,15 +73,16 @@ res.redirect('campgrounds')
 
 app.get('/campgrounds/:id', (req,res)=>{
 let {id} = req.params
-    Campground.findById(id, (err, campground)=>{
-      if(err){console.log(err);}
-      else {
-        console.log(campground);
-        res.render('show', {
-          campground
-        })
-      }
-    })
+  console.log(id);
+  Campground.findById(id).populate('comments').exec((err, campgrounds)=>{
+    if(err){console.log('error');}
+    else {
+      console.log(campgrounds);
+      res.render('show', {
+        campgrounds
+      })
+    }
+  })
 
 })
 
