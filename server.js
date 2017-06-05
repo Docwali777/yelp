@@ -9,6 +9,8 @@ mongoose.connect('mongodb://localhost/yelp_camp')
 
 mongoose.connection.on('error', ()=>{
   console.log('There is no connection');
+}).once('connected', ()=>{
+  console.log('Connected to mongodb');
 })
 
 const app = express()
@@ -16,9 +18,18 @@ const PORT = process.env.PORT || 3000
 
 //Schema Set-up
 let campgroundSchema = new Schema({
-  name: String,
-  url: String,
-  description: String
+  name: {
+    type: String,
+    required: true
+  },
+  url: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  }
 
 })
 
@@ -37,8 +48,8 @@ var Campground = mongoose.model('Campground', campgroundSchema)
 
 app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({extended: true}))
-app.use(express.static('views'))
-app.use('/public/styles', express.static(__dirname + '/styles'))
+// app.use(express.static('views'))
+app.use(express.static('/styles'))
 
 app.get('/', (req, res)=>{
   res.render('landing')
