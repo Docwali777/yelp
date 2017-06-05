@@ -1,52 +1,99 @@
 const express = require('express');
 const ejs = require('ejs');
 const path = require('path');
+const mongoose = require('mongoose');
+let {Schema} = mongoose
 const bodyParser = require('body-parser');
+
+mongoose.connect('mongodb://localhost/yelp_camp')
+
+mongoose.connection.on('error', ()=>{
+  console.log('There is no connection');
+})
+
 const app = express()
 const PORT = process.env.PORT || 3000
 
-let campgrounds = [
-  {
-    name: 'SugarHill',
-    url: 'https://farm4.staticflickr.com/3114/3571272604_0aa8b05f51.jpg'
-  },
-  {
-    name: 'Billy Goat trail',
-    url: 'https://farm7.staticflickr.com/6134/6013835836_0decc6f460.jpg'
-  },
-  {
-    name: 'Bones and fiction',
-    url: 'https://farm6.staticflickr.com/5486/14273566539_62d5205456.jpg'
-  }
-]
+//Schema Set-up
+let campgroundSchema = new Schema({
+  name: String,
+  url: String,
+  description: String
+
+})
+
+var Campground = mongoose.model('Campground', campgroundSchema)
+
+// Campground.create({
+//   name: 'People Sparks Trail',
+//   url: 'https://farm4.staticflickr.com/3560/3359900715_835e7b54d7.jpg',
+//   description: 'Meets my Expectiontations of a great trail'
+// }, (err, campground)=>{
+//   if(err){console.log(err);}
+//   else {
+//     console.log(`created new campground`, campground);
+//   }
+// })
 
 app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({extended: true}))
-// app.set(express.static(path.join(__dirname, 'views')))
+app.use(express.static('views'))
+app.use('/public/styles', express.static(__dirname + '/styles'))
 
 app.get('/', (req, res)=>{
   res.render('landing')
 })
 
 app.get('/campgrounds', (req, res)=>{
-  res.render('campgrounds', {
-    campgrounds
+  Campground.find({}, (err, campgrounds)=>{
+    if(err){console.log(err);}
+    else {
+      res.render('index', {
+        campgrounds
+      })
+    }
   })
+
 })
 
+//show form to create a campground
 app.get('/campgrounds/new', (req, res)=>{
-
   res.render('new.ejs')
 })
 
 app.post('/campgrounds', (req, res)=>{
-    let {name, url } = req.body
-     campgrounds.push({name, url})
-     let newc = [{name, url}]
-//get data from form and add to campgrounds app
-//redirect back to campground apge
+
+Campground.create({
+  name: req.body.name,
+  url: req.body.url,
+  description: req.body.description
+}, (err, campgrounds)=>{
+  if(err){console.log(err);}
+  else {
+    console.log(campgrounds);
+    res.render('campgrounds', {
+      campgrounds
+    })
+  }
+})
+
 res.redirect('campgrounds')
 })
+
+app.get('/campgrounds/:id', (req,res)=>{
+let {id} = req.params
+    Campground.findById(id, (err, campground)=>{
+      if(err){console.log(err);}
+      else {
+        console.log(campground);
+        res.render('show', {
+          campground
+        })
+      }
+    })
+
+})
+
 
 
 app.listen(PORT, ()=>{
