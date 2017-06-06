@@ -1,18 +1,22 @@
 {
-  "name": "yelp-campground",
+  "name": "yelp",
   "version": "1.0.0",
   "main": "index.js",
+  "repository": "https://github.com/Docwali777/yelp.git",
+  "author": "docwali777 <drgauvin@mgmcare.org>",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.17.2",
     "ejs": "^2.5.6",
     "express": "^4.15.3",
-    "mongoose": "^4.10.4"
+    "express-session": "^1.15.3",
+    "mongodb": "2.2.26",
+    "mongoose": "4.10.2",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^4.0.0"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
-  },
-  "scripts": {
-    "nodemon": "nodemon server.js"
   }
 }
