@@ -45,7 +45,8 @@ const Campground = require('./models/campgrounds')
 
 // mongoose.connect('mongodb://person:person@ds151059.mlab.com:51059/yelp?authSource=admin')
 // mongoose.connect('mongodb://localhost/yelp_camp')
-mongoose.connect(MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI)
+console.log(process.env.MONGODB_URI);
 mongoose.connection.on('error', (error)=>{
   console.log('There is no connection');
   console.log(error);
